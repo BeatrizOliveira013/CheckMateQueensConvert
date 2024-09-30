@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+  
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&display=swap" rel="stylesheet"> 
+
+   
+    <link rel="stylesheet" href="style.css">
+
+    <title>CheckMate Queen's Convert</title> 
+</head>
+<body>
+
+    <div id="container">
+        <h1>CheckMate Queen's Convert</h1>
+        
+      
+        <div class="input-button-container">
+            <input id="inputValue" type="text" placeholder="Digite um valor">
+            <button onclick="converter()" disabled>Converter</button> 
+        </div>
+
+       
+        <select id="inputBase" onchange="mudarPlaceholder()">
+            <option value="">Selecione uma opção</option>
+            <option value="decimal">Decimal</option>
+            <option value="hexadecimal">Hexadecimal</option>
+            <option value="octal">Octal</option>
+            <option value="binario">Binário</option>
+        </select>
+        <br>
+
+        <h3>Converter para:</h3> 
+
+       
+        <input type="checkbox" id="convertDecimal"><label for="convertDecimal">Decimal</label>
+        <input type="checkbox" id="convertHexadecimal"><label for="convertHexadecimal">Hexadecimal</label>
+        <input type="checkbox" id="convertOctal"><label for="convertOctal">Octal</label>
+        <input type="checkbox" id="convertBinario"><label for="convertBinario">Binário</label>
+        <br>
+
+       
+        <div id="output"></div>
+        <div id="div_validar"></div>
+
+       
+        <button id="resetButton" onclick="resetar()">Resetar</button> 
+    </div>
+
+    <script>
+        // Função que muda o placeholder do campo de entrada com base na base selecionada
+        function mudarPlaceholder() {
+            var escolha = document.getElementById("inputBase").value; 
+            var campoEntrada = document.getElementById("inputValue"); 
+            
+            // Muda o placeholder de acordo com a base escolhida
+            if (escolha === "decimal") {
+                campoEntrada.placeholder = "Digite um valor decimal";
+            } else if (escolha === "hexadecimal") {
+                campoEntrada.placeholder = "Digite um valor hexadecimal";
+            } else if (escolha === "octal") {
+                campoEntrada.placeholder = "Digite um valor octal";
+            } else if (escolha === "binario") {
+                campoEntrada.placeholder = "Digite um valor binário";
+            }
+
+            habilitarBotao(); // Chama a função para habilitar ou desabilitar o botão de conversão
+        }
+
+        // Função que habilita o botão de conversão se o valor e a base forem preenchidos
+        function habilitarBotao() {
+            var inputValue = document.getElementById('inputValue').value;
+            var inputBase = document.getElementById('inputBase').value;
+            var botaoConverter = document.querySelector('button');
+
+            // Habilita o botão se ambos os campos estiverem preenchidos
+            if (inputValue && inputBase) {
+                botaoConverter.disabled = false;
+            } else {
+                botaoConverter.disabled = true;
+            }
+        }
+
+        // Função que realiza a conversão
+        function converter() {
+            var inputValue = document.getElementById('inputValue').value; 
+            var inputBase = document.getElementById('inputBase').value; 
+            var div_resultado = document.getElementById('output'); 
+            var div_validar = document.getElementById('div_validar'); 
+
+            // Validação do valor de entrada
+            if (!validarEntrada(inputValue, inputBase)) {
+                div_validar.innerHTML = 'Digite um número válido para a base selecionada!'; 
+                return; // Interrompe a função se a entrada for inválida
+            } else {
+                div_validar.innerHTML = ''; // Limpa a mensagem de validação se a entrada for válida
+            }
+
+            var decimalValue; // Variável para armazenar o valor convertido em decimal
+
+            // Converte o valor de entrada para decimal com base na base selecionada
+            if (inputBase === 'decimal') {
+                decimalValue = parseInt(inputValue, 10); 
+            } else if (inputBase === 'hexadecimal') {
+                decimalValue = parseInt(inputValue, 16); 
+            } else if (inputBase === 'octal') {
+                decimalValue = parseInt(inputValue, 8); 
+            } else if (inputBase === 'binario') {
+                decimalValue = parseInt(inputValue, 2); 
+            }
+
+            var resultadoConversao = ''; // Variável para armazenar os resultados das conversões
+
+          
+            if (document.getElementById('convertDecimal').checked) {
+                resultadoConversao += `<p>Decimal: ${decimalValue.toLocaleString()}</p>`; // Adiciona separador de milhar
+            }
+
+           
+            if (document.getElementById('convertHexadecimal').checked) {
+                resultadoConversao += `<p>Hexadecimal: ${decimalValue.toString(16).toUpperCase()}</p>`;
+            }
+
+           
+            if (document.getElementById('convertOctal').checked) {
+                resultadoConversao += `<p>Octal: ${decimalValue.toString(8)}</p>`;
+            }
+
+           
+            if (document.getElementById('convertBinario').checked) {
+                resultadoConversao += `<p>Binário: ${decimalValue.toString(2)}</p>`;
+            }
+
+            div_resultado.innerHTML = resultadoConversao; 
+        }
+
+        // Função que valida se o valor de entrada está correto para a base selecionada
+        function validarEntrada(inputValue, inputBase) {
+            var validChars = ''; // Armazena os caracteres válidos para a base
+
+            // Define os caracteres válidos para cada base
+            if (inputBase === 'decimal') {
+                validChars = '0123456789'; 
+            } else if (inputBase === 'hexadecimal') {
+                validChars = '0123456789ABCDEFabcdef'; 
+            } else if (inputBase === 'octal') {
+                validChars = '01234567'; 
+            } else if (inputBase === 'binario') {
+                validChars = '01'; 
+            }
+
+            // Valida se todos os caracteres da entrada são válidos para a base escolhida
+            for (var i = 0; i < inputValue.length; i++) {
+                if (validChars.indexOf(inputValue[i]) === -1) {
+                    return false; // Retorna falso se encontrar algum caractere inválido
+                }
+            }
+            return true; // Retorna verdadeiro se todos os caracteres forem válidos
+        }
+
+        // Função para resetar todos os campos e opções
+        function resetar() {
+            document.getElementById('inputValue').value = ''; 
+            document.getElementById('inputBase').value = ''; 
+            document.getElementById('convertDecimal').checked = false; 
+            document.getElementById('convertHexadecimal').checked = false; 
+            document.getElementById('convertOctal').checked = false; 
+            document.getElementById('convertBinario').checked = false; 
+            document.getElementById('output').innerHTML = ''; 
+            document.getElementById('div_validar').innerHTML = ''; 
+            document.querySelector('button').disabled = true; 
+        }
+    </script>
+</body>
+</html>
